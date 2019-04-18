@@ -101,24 +101,28 @@ class Interpreter {
         return parseInt(ct.value);
     }
 
-    //check the expression current only avaiable expr -> INTEGER PLUS INTERGET;
+    factor() {
+        let current_token = this.current_token;
+        this.eat(TokenType.INTEGER);
+        return parseInt(current_token.value);
+    }
+
     expr() {
         this.current_token = this.get_next_token();
-
-        let re = this.term(TokenType.INTEGER);
+        let re = this.factor();
 
         while (
-            this.current_token.type == TokenType.PLUS ||
-            this.current_token.type == TokenType.MINUS
+            this.current_token.type == TokenType.MUL ||
+            this.current_token.type == TokenType.DIVISION
         ) {
-            if (this.current_token.type == TokenType.PLUS) {
-                this.eat(TokenType.PLUS);
-                re = re + this.term(TokenType.INTEGER);
+            if (this.current_token.type == TokenType.MUL) {
+                this.eat(TokenType.MUL);
+                re = re * this.factor();
             }
 
-            if (this.current_token.type == TokenType.MINUS) {
-                this.eat(TokenType.MINUS);
-                re = re - this.term(TokenType.INTEGER);
+            if (this.current_token.type == TokenType.DIVISION) {
+                this.eat(TokenType.DIVISION);
+                re = re / this.factor();
             }
         }
 
