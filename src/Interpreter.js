@@ -16,8 +16,18 @@ class Interpreter {
         return re.test(c);
     }
 
+    skipwhitespace() {
+        let current = this.text[this.pos];
+
+        while (/\s/g.test(current)) {
+            this.pos++;
+            current = this.text[this.pos];
+        }
+    }
+
     //get next token;
     get_next_token() {
+        this.skipwhitespace();
         if (this.pos > this.text.length - 1)
             return new Token(TokenType.EOF, null);
 
