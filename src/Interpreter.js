@@ -41,36 +41,6 @@ class Interpreter {
 
     //get next token;
     get_next_token() {
-        // this.skip_whitespace();
-        // if (this.pos > this.text.length - 1)
-        //     return new Token(TokenType.EOF, null);
-
-        // let current_char = this.text[this.pos];
-
-        // if (this.isdigital(current_char)) {
-        //     let next = current_char;
-        //     let temp = '';
-        //     while (this.isdigital(next)) {
-        //         temp += next;
-        //         this.pos++;
-        //         next = this.text[this.pos];
-        //     }
-
-        //     return new Token(TokenType.INTEGER, temp);
-        // }
-
-        // if (current_char === '+') {
-        //     this.pos++;
-        //     return new Token(TokenType.PLUS, current_char);
-        // }
-
-        // if (current_char === '-') {
-        //     this.pos++;
-        //     return new Token(TokenType.MINUS, current_char);
-        // }
-
-        // this.error();
-
         while (this.current_char) {
             if (this.isspace(this.current_char)) {
                 this.skip_whitespace();
@@ -125,47 +95,34 @@ class Interpreter {
         } else this.current_char = this.text[this.pos];
     }
 
+    term(type) {
+        let ct = this.current_token;
+        this.eat(type);
+        return parseInt(ct.value);
+    }
+
     //check the expression current only avaiable expr -> INTEGER PLUS INTERGET;
     expr() {
         this.current_token = this.get_next_token();
-        let left = this.current_token;
-        this.eat(TokenType.INTEGER); //match the first Integer,and get the next token;
 
-        let op = this.current_token;
-        if (op.type == TokenType.PLUS) {
-            this.eat(TokenType.PLUS);
-        }
-        if (op.type == TokenType.MINUS) {
-            this.eat(TokenType.MINUS);
-        }
+        let re = this.term(TokenType.INTEGER);
 
-        if (op.type == TokenType.MUL) {
-            this.eat(TokenType.MUL);
-        }
+        while (
+            this.current_token.type == TokenType.PLUS ||
+            this.current_token.type == TokenType.MINUS
+        ) {
+            if (this.current_token.type == TokenType.PLUS) {
+                this.eat(TokenType.PLUS);
+                re = re + this.term(TokenType.INTEGER);
+            }
 
-        if (op.type == TokenType.DIVISION) {
-            this.eat(TokenType.DIVISION);
-        }
-
-        let right = this.current_token;
-
-        this.eat(TokenType.INTEGER);
-
-        if (op.type == TokenType.PLUS) {
-            return parseInt(left.value) + parseInt(right.value);
+            if (this.current_token.type == TokenType.MINUS) {
+                this.eat(TokenType.MINUS);
+                re = re - this.term(TokenType.INTEGER);
+            }
         }
 
-        if (op.type == TokenType.MINUS) {
-            return parseInt(left.value) - parseInt(right.value);
-        }
-
-        if (op.type == TokenType.MUL) {
-            return parseInt(left.value) * parseInt(right.value);
-        }
-
-        if (op.type == TokenType.DIVISION) {
-            return parseInt(left.value) / parseInt(right.value);
-        }
+        return re;
     }
 }
 
