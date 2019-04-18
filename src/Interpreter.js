@@ -6,6 +6,8 @@ class Interpreter {
         this.text = text;
         this.pos = 0;
         this.current_token = null;
+        //add current_char field;
+        this.current_char = this.text[this.pos];
     }
 
     error() {
@@ -16,46 +18,83 @@ class Interpreter {
         return re.test(c);
     }
 
-    skipwhitespace() {
-        let current = this.text[this.pos];
+    isspace(c) {
+        return /\s/g.test(c);
+    }
 
-        while (/\s/g.test(current)) {
-            this.pos++;
-            current = this.text[this.pos];
+    skip_whitespace() {
+        while (this.current_char != null && this.isspace(this.current_char)) {
+            this.advance();
         }
+    }
+
+    //Return a (multidigit) integer consumed from the input.
+    integer() {
+        let re = '';
+        while (this.current_char != null && this.isdigital(this.current_char)) {
+            re += this.current_char;
+            this.advance();
+        }
+
+        return re;
     }
 
     //get next token;
     get_next_token() {
-        this.skipwhitespace();
-        if (this.pos > this.text.length - 1)
-            return new Token(TokenType.EOF, null);
+        // this.skip_whitespace();
+        // if (this.pos > this.text.length - 1)
+        //     return new Token(TokenType.EOF, null);
 
-        let current_char = this.text[this.pos];
+        // let current_char = this.text[this.pos];
 
-        if (this.isdigital(current_char)) {
-            let next = current_char;
-            let temp = '';
-            while (this.isdigital(next)) {
-                temp += next;
-                this.pos++;
-                next = this.text[this.pos];
+        // if (this.isdigital(current_char)) {
+        //     let next = current_char;
+        //     let temp = '';
+        //     while (this.isdigital(next)) {
+        //         temp += next;
+        //         this.pos++;
+        //         next = this.text[this.pos];
+        //     }
+
+        //     return new Token(TokenType.INTEGER, temp);
+        // }
+
+        // if (current_char === '+') {
+        //     this.pos++;
+        //     return new Token(TokenType.PLUS, current_char);
+        // }
+
+        // if (current_char === '-') {
+        //     this.pos++;
+        //     return new Token(TokenType.MINUS, current_char);
+        // }
+
+        // this.error();
+
+        while (this.current_char) {
+            if (this.isspace(this.current_char)) {
+                this.skip_whitespace();
+                continue;
             }
 
-            return new Token(TokenType.INTEGER, temp);
+            if (this.isdigital(this.current_char)) {
+                return new Token(TokenType.INTEGER, this.integer());
+            }
+
+            if (this.current_char === '+') {
+                this.advance();
+                return new Token(TokenType.PLUS, '+');
+            }
+
+            if (this.current_char === '-') {
+                this.advance();
+                return new Token(TokenType.MINUS, '-');
+            }
+
+            this.error();
         }
 
-        if (current_char === '+') {
-            this.pos++;
-            return new Token(TokenType.PLUS, current_char);
-        }
-
-        if (current_char === '-') {
-            this.pos++;
-            return new Token(TokenType.MINUS, current_char);
-        }
-
-        this.error();
+        return new Token(TokenType.EOF, null);
     }
     /*compare current token type with passed token type
      * if matched then return the next_token
@@ -66,6 +105,17 @@ class Interpreter {
         if (this.current_token.type === token_type) {
             this.current_token = this.get_next_token();
         } else throw new Error(`${token_type} is not matched`);
+    }
+
+    //move the pos pointer and set the current_char
+    advance() {
+        this.pos++;
+        //reach the end of input
+        if (this.pos > this.text.length - 1) {
+            this.current_char = null;
+        } else {
+            this.current_char = this.text[this.pos];
+        }
     }
 
     //check the expression current only avaiable expr -> INTEGER PLUS INTERGET;
