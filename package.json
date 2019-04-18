@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "babel-node src/test.js"
+        "test": "babel-node src/test.js",
+        "debug": "babel-node --inspect-brk src/test.js"
     },
     "author": "",
     "license": "ISC",

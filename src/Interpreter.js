@@ -1,4 +1,5 @@
 import TokenType from './TokenType';
+import Token from './Token';
 
 class Interpreter {
     constructor(text) {
@@ -10,6 +11,10 @@ class Interpreter {
     error() {
         throw new Error('Error parsing input');
     }
+    isdigital(c) {
+        let re = /\d/g;
+        return re.test(c);
+    }
 
     //get next token;
     get_next_token() {
@@ -18,7 +23,7 @@ class Interpreter {
 
         let current_char = this.text[this.pos];
 
-        if (isdigital(current_char)) {
+        if (this.isdigital(current_char)) {
             this.pos++;
             return new Token(TokenType.INTEGER, current_char);
         }
@@ -38,8 +43,7 @@ class Interpreter {
     eat(token_type) {
         if (this.current_token.type === token_type) {
             this.current_token = this.get_next_token();
-        }
-        throw new Error(`${token_type} is not matched`);
+        } else throw new Error(`${token_type} is not matched`);
     }
 
     //check the expression current only avaiable expr -> INTEGER PLUS INTERGET;
@@ -55,7 +59,7 @@ class Interpreter {
 
         this.eat(TokenType.INTEGER);
 
-        return left.value + right.value;
+        return parseInt(left.value) + parseInt(right.value);
     }
 }
 
