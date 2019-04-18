@@ -91,6 +91,16 @@ class Interpreter {
                 return new Token(TokenType.MINUS, '-');
             }
 
+            if (this.current_char === '*') {
+                this.advance();
+                return new Token(TokenType.MUL, '*');
+            }
+
+            if (this.current_char === '/') {
+                this.advance();
+                return new Token(TokenType.DIVISION, '/');
+            }
+
             this.error();
         }
 
@@ -129,6 +139,14 @@ class Interpreter {
             this.eat(TokenType.MINUS);
         }
 
+        if (op.type == TokenType.MUL) {
+            this.eat(TokenType.MUL);
+        }
+
+        if (op.type == TokenType.DIVISION) {
+            this.eat(TokenType.DIVISION);
+        }
+
         let right = this.current_token;
 
         this.eat(TokenType.INTEGER);
@@ -139,6 +157,14 @@ class Interpreter {
 
         if (op.type == TokenType.MINUS) {
             return parseInt(left.value) - parseInt(right.value);
+        }
+
+        if (op.type == TokenType.MUL) {
+            return parseInt(left.value) * parseInt(right.value);
+        }
+
+        if (op.type == TokenType.DIVISION) {
+            return parseInt(left.value) / parseInt(right.value);
         }
     }
 }
