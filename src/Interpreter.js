@@ -30,12 +30,12 @@ class Interpreter {
 
     //Return a (multidigit) integer consumed from the input.
     integer() {
+        //not end and is digital loop
         let re = '';
         while (this.current_char != null && this.isdigital(this.current_char)) {
             re += this.current_char;
             this.advance();
         }
-
         return re;
     }
 
@@ -110,12 +110,9 @@ class Interpreter {
     //move the pos pointer and set the current_char
     advance() {
         this.pos++;
-        //reach the end of input
         if (this.pos > this.text.length - 1) {
-            this.current_char = null;
-        } else {
-            this.current_char = this.text[this.pos];
-        }
+            this.current_char = null; // represent the end character;
+        } else this.current_char = this.text[this.pos];
     }
 
     //check the expression current only avaiable expr -> INTEGER PLUS INTERGET;
