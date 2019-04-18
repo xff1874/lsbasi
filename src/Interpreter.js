@@ -24,8 +24,15 @@ class Interpreter {
         let current_char = this.text[this.pos];
 
         if (this.isdigital(current_char)) {
-            this.pos++;
-            return new Token(TokenType.INTEGER, current_char);
+            let next = current_char;
+            let temp = '';
+            while (this.isdigital(next)) {
+                temp += next;
+                this.pos++;
+                next = this.text[this.pos];
+            }
+
+            return new Token(TokenType.INTEGER, temp);
         }
 
         if (current_char === '+') {
