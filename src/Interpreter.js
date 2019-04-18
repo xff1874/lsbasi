@@ -50,6 +50,11 @@ class Interpreter {
             return new Token(TokenType.PLUS, current_char);
         }
 
+        if (current_char === '-') {
+            this.pos++;
+            return new Token(TokenType.MINUS, current_char);
+        }
+
         this.error();
     }
     /*compare current token type with passed token type
@@ -70,13 +75,24 @@ class Interpreter {
         this.eat(TokenType.INTEGER); //match the first Integer,and get the next token;
 
         let op = this.current_token;
-        this.eat(TokenType.PLUS);
+        if (op.type == TokenType.PLUS) {
+            this.eat(TokenType.PLUS);
+        }
+        if (op.type == TokenType.MINUS) {
+            this.eat(TokenType.MINUS);
+        }
 
         let right = this.current_token;
 
         this.eat(TokenType.INTEGER);
 
-        return parseInt(left.value) + parseInt(right.value);
+        if (op.type == TokenType.PLUS) {
+            return parseInt(left.value) + parseInt(right.value);
+        }
+
+        if (op.type == TokenType.MINUS) {
+            return parseInt(left.value) - parseInt(right.value);
+        }
     }
 }
 
