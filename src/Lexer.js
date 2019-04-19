@@ -80,6 +80,16 @@ class Lexer {
                 return new Token(TokenType.DIVISION, '/');
             }
 
+            if (this.current_char === '(') {
+                this.advance();
+                return new Token(TokenType.LPAREN, '(');
+            }
+
+            if (this.current_char === ')') {
+                this.advance();
+                return new Token(TokenType.RPAREN, ')');
+            }
+
             this.error();
         }
 

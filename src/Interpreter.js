@@ -24,9 +24,18 @@ class Interpreter {
         } else throw new Error(`${token_type} is not matched`);
     }
     factor() {
-        let current = this.current_token;
-        this.eat(TokenType.INTEGER);
-        return parseInt(current.value);
+        if (this.current_token.type == TokenType.INTEGER) {
+            let current = this.current_token;
+            this.eat(TokenType.INTEGER);
+            return parseInt(current.value);
+        }
+
+        if (this.current_token.type == TokenType.LPAREN) {
+            this.eat(TokenType.LPAREN);
+            let re = this.expr();
+            this.eat(TokenType.RPAREN);
+            return re;
+        }
     }
     term() {
         let re = this.factor();

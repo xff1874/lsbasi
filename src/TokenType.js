@@ -5,6 +5,8 @@ const TokenType = {
     MINUS: 'MINUS',
     MUL: 'MUL',
     DIVISION: 'DIVISION',
+    LPAREN: 'LPAREN',
+    RPAREN: 'RPAREN',
 };
 
 export default TokenType;
