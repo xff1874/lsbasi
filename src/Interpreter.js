@@ -23,8 +23,12 @@ class Interpreter {
             this.current_token = this.lexer.get_next_token();
         } else throw new Error(`${token_type} is not matched`);
     }
-
-    expr() {
+    factor() {
+        let current = this.current_token;
+        this.eat(TokenType.INTEGER);
+        return parseInt(current.value);
+    }
+    term() {
         let re = this.factor();
 
         while (
@@ -39,6 +43,26 @@ class Interpreter {
             if (this.current_token.type == TokenType.DIVISION) {
                 this.eat(TokenType.DIVISION);
                 re = re / this.factor();
+            }
+        }
+        return re;
+    }
+
+    expr() {
+        let re = this.term();
+
+        while (
+            this.current_token.type == TokenType.PLUS ||
+            this.current_token.type == TokenType.MINUS
+        ) {
+            if (this.current_token.type == TokenType.PLUS) {
+                this.eat(TokenType.PLUS);
+                re = re + this.term();
+            }
+
+            if (this.current_token.type == TokenType.MINUS) {
+                this.eat(TokenType.MINUS);
+                re = re - this.term();
             }
         }
 
