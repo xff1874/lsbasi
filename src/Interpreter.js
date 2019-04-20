@@ -8,34 +8,34 @@ class Interpreter {
     }
 
     visit_BinOp(node) {
-        if (node.type == TokenType.PLUS) {
+        if (node.token.type == TokenType.PLUS) {
             return this.visit(node.left) + this.visit(node.right);
         }
 
-        if (node.type == TokenType.MINUS) {
+        if (node.token.type == TokenType.MINUS) {
             return this.visit(node.left) - this.visit(node.right);
         }
 
-        if (node.type == TokenType.MUL) {
+        if (node.token.type == TokenType.MUL) {
             return this.visit(node.left) * this.visit(node.right);
         }
 
-        if (node.type == TokenType.DIVISION) {
+        if (node.token.type == TokenType.DIVISION) {
             return this.visit(node.left) / this.visit(node.right);
         }
     }
 
     visit_num(node) {
-        return node.value;
+        return parseInt(node.token.value);
     }
 
     visit(node) {
         if (node instanceof BinOp) {
-            this.visit_BinOp(node);
+            return this.visit_BinOp(node);
         }
 
         if (node instanceof NumOp) {
-            this.visit_num(node);
+            return this.visit_num(node);
         }
     }
 }

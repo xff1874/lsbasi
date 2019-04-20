@@ -70,6 +70,8 @@ export default class Parser {
 
             return new BinOp(left, temp, this.term());
         }
+
+        return left;
     }
 
     parse() {
