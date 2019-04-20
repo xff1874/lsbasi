@@ -11,7 +11,7 @@ const astPrint = function(ast) {
 
 function run() {
     debugger;
-    let lexer = new Lexer('7 + (((3 + 2)))');
+    let lexer = new Lexer('(2 + 3 * 5) ');
     let parser = new Parser(lexer);
     let ast = parser.parse();
 

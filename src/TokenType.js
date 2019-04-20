@@ -1,10 +1,10 @@
 const TokenType = {
     INTEGER: 'INTEGER',
-    PLUS: 'PLUS',
+    PLUS: '+',
     EOF: 'EOF',
-    MINUS: 'MINUS',
-    MUL: 'MUL',
-    DIVISION: 'DIVISION',
+    MINUS: '-',
+    MUL: '*',
+    DIVISION: '/',
     LPAREN: 'LPAREN',
     RPAREN: 'RPAREN',
 };
