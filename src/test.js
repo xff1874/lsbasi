@@ -13,7 +13,9 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer('7 + 3 * 5/5');
+    let lex = new Lexer(
+        '7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)'
+    );
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
     // }

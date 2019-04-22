@@ -25,12 +25,12 @@ class Parser {
     }
 
     factor() {
-        if (this.current_token.type == TokenType.NUM) {
-            let current_token = this.current_token;
+        let current = this.current_token;
+        if (current.type == TokenType.NUM) {
             this.eat(TokenType.NUM);
-            return new NumAST(current_token);
+            return new NumAST(current);
         }
-        if (this.current_token.type == TokenType.LPAREN) {
+        if (current.type == TokenType.LPAREN) {
             this.eat(TokenType.LPAREN);
             let re = this.exp();
             this.eat(TokenType.RPAREN);
@@ -39,30 +39,29 @@ class Parser {
     }
 
     term() {
-        let left = this.factor();
+        let node = this.factor();
 
         while (
             this.current_token.type == TokenType.MUL ||
             this.current_token.type == TokenType.DIVISION
         ) {
-            let currentToken = this.current_token;
-
-            if (currentToken.type == TokenType.MUL) {
+            let current_token = this.current_token;
+            if (this.current_token.type == TokenType.MUL) {
                 this.eat(TokenType.MUL);
-                return new BinaryAST(left, currentToken, this.factor());
             }
 
-            if (currentToken.type == TokenType.DIVISION) {
+            if (this.current_token.type == TokenType.DIVISION) {
                 this.eat(TokenType.DIVISION);
-                return new BinaryAST(left, currentToken, this.factor());
             }
+            //save previous node as left tree branch.
+            node = new BinaryAST(node, current_token, this.factor());
         }
 
-        return left;
+        return node;
     }
 
     exp() {
-        let left = this.term();
+        let node = this.term();
 
         while (
             this.current_token.type === TokenType.PLUS ||
@@ -71,15 +70,13 @@ class Parser {
             let current_token = this.current_token;
             if (current_token.type == TokenType.PLUS) {
                 this.eat(TokenType.PLUS);
-                return new BinaryAST(left, current_token, this.term());
-            }
-
-            if (current_token.type == TokenType.MINUS) {
+                node = new BinaryAST(node, current_token, this.term());
+            } else if (current_token.type == TokenType.MINUS) {
                 this.eat(TokenType.MINUS);
-                return new BinaryAST(left, current_token, this.term());
+                node = new BinaryAST(node, current_token, this.term());
             }
         }
-        return left;
+        return node;
     }
 
     parse() {
