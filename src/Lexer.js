@@ -64,7 +64,7 @@ class Lexer {
 
             if (this.current_char == '-') {
                 this.advance();
-                return new Token(TokenType.DIVISION, '-');
+                return new Token(TokenType.MINUS, '-');
             }
 
             if (this.current_char == '*') {

@@ -14,6 +14,10 @@ class Token {
         this.type = type;
         this.value = value;
     }
+
+    toString() {
+        return `Token type is ${this.type} and value is ${this.value}`;
+    }
 }
 
 export { TokenType, Token };
