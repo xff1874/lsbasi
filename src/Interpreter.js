@@ -1,6 +1,6 @@
 import TokenType from './TokenType';
 import Token from './Token';
-import { BinOp, NumOp } from './astnode';
+import { BinOp, NumOp, UnaryOp } from './astnode';
 
 class Interpreter {
     constructor(ast) {
@@ -8,21 +8,18 @@ class Interpreter {
     }
 
     visit_BinOp(node) {
-        // if (node.token.type == TokenType.PLUS) {
-        //     return this.visit(node.left) + this.visit(node.right);
-        // }
-
-        // if (node.token.type == TokenType.MINUS) {
-        //     return this.visit(node.left) - this.visit(node.right);
-        // }
-
-        // if (node.token.type == TokenType.MUL) {
-        //     return this.visit(node.left) * this.visit(node.right);
-        // }
-
-        // if (node.token.type == TokenType.DIVISION) {
-        //     return this.visit(node.left) / this.visit(node.right);
-        // }
+        if (node.token.type == TokenType.PLUS) {
+            return this.visit(node.left) + this.visit(node.right);
+        }
+        if (node.token.type == TokenType.MINUS) {
+            return this.visit(node.left) - this.visit(node.right);
+        }
+        if (node.token.type == TokenType.MUL) {
+            return this.visit(node.left) * this.visit(node.right);
+        }
+        if (node.token.type == TokenType.DIVISION) {
+            return this.visit(node.left) / this.visit(node.right);
+        }
         // return (
         //     this.visit(node.left) +
         //     ' ' +
@@ -30,10 +27,19 @@ class Interpreter {
         //     ' ' +
         //     node.token.type
         // );
+        // return `(${node.token.type} ${this.visit(node.left)} ${this.visit(
+        //     node.right
+        // )})`;
+    }
 
-        return `(${node.token.type} ${this.visit(node.left)} ${this.visit(
-            node.right
-        )})`;
+    visit_unaryOp(node) {
+        if (node.token.type == TokenType.PLUS) {
+            return +this.visit(node.expr);
+        }
+
+        if (node.token.type == TokenType.MINUS) {
+            return -this.visit(node.expr);
+        }
     }
 
     visit_num(node) {
@@ -47,6 +53,10 @@ class Interpreter {
 
         if (node instanceof NumOp) {
             return this.visit_num(node);
+        }
+
+        if (node instanceof UnaryOp) {
+            return this.visit_unaryOp(node);
         }
     }
 }

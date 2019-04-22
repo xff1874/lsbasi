@@ -14,4 +14,12 @@ class NumOp extends Ast {
     }
 }
 
-export { BinOp, NumOp };
+class UnaryOp extends Ast {
+    constructor(token, expr) {
+        super(token, expr);
+        this.token = token;
+        this.expr = expr;
+    }
+}
+
+export { BinOp, NumOp, UnaryOp };

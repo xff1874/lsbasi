@@ -1,5 +1,5 @@
 import TokenType from './TokenType';
-import { NumOp, BinOp } from './astnode.js';
+import { NumOp, BinOp, UnaryOp } from './astnode.js';
 
 export default class Parser {
     constructor(lexer) {
@@ -22,6 +22,18 @@ export default class Parser {
             let current = this.current_token;
             this.eat(TokenType.INTEGER);
             return new NumOp(current);
+        }
+
+        if (this.current_token.type == TokenType.PLUS) {
+            let current = this.current_token;
+            this.eat(TokenType.PLUS);
+            return new UnaryOp(current, this.factor());
+        }
+
+        if (this.current_token.type == TokenType.MINUS) {
+            let current = this.current_token;
+            this.eat(TokenType.MINUS);
+            return new UnaryOp(current, this.factor());
         }
 
         if (this.current_token.type == TokenType.LPAREN) {
