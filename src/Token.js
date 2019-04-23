@@ -7,6 +7,12 @@ const TokenType = {
     LPAREN: '(',
     RPAREN: ')',
     EOF: 'EOF',
+    BEGIN: 'BEGIN',
+    END: 'END',
+    ID: 'ID',
+    SEMI: 'SEMI',
+    DOT: 'DOT',
+    ASSIGN: 'ASSIGN',
 };
 
 class Token {
@@ -20,4 +26,9 @@ class Token {
     }
 }
 
-export { TokenType, Token };
+const reservedwords = {
+    BEGIN: new Token(TokenType.BEGIN, TokenType.BEGIN),
+    END: new Token(TokenType.END, TokenType.END),
+};
+
+export { TokenType, Token, reservedwords };

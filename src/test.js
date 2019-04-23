@@ -13,19 +13,17 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer(
-        '7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)'
-    );
-    // while (!lex.isEnd()) {
-    //     console.log(lex.get_next_token());
-    // }
+    let lex = new Lexer('BEGIN a := 2; END.');
+    while (!lex.isEnd()) {
+        console.log(lex.get_next_token());
+    }
 
-    let parser = new Parser(lex);
-    let p = parser.parse();
-    astPrint(p);
-    let interpter = new Interpter();
-    let re = interpter.visit(p);
-    console.log(re);
+    // let parser = new Parser(lex);
+    // let p = parser.parse();
+    // astPrint(p);
+    // let interpter = new Interpter();
+    // let re = interpter.visit(p);
+    // console.log(re);
 }
 
 run();
