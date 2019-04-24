@@ -42,7 +42,8 @@ class Lexer {
 
     skip_white_space() {
         if (this.is_space_char(this.current_char))
-            while (!this.isEnd() && this.current_char == ' ') this.advance();
+            while (!this.isEnd() && this.is_space_char(this.current_char))
+                this.advance();
     }
 
     create_digital_token() {
@@ -56,7 +57,7 @@ class Lexer {
     }
 
     is_id(c) {
-        return /\w/.test(c);
+        return /[a-zA-Z]/.test(c);
     }
 
     create_id() {

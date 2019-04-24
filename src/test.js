@@ -13,17 +13,25 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer('BEGIN a := 2; END.');
-    while (!lex.isEnd()) {
-        console.log(lex.get_next_token());
-    }
+    let lex = new Lexer(`
+BEGIN
+    BEGIN
+        number := 2;
+        a := number;
+        b := 10 * a + 10 * number / 4;
+    END;
+    x := 11;
+END.`);
+    // while (!lex.isEnd()) {
+    //     console.log(lex.get_next_token());
+    // }
 
-    // let parser = new Parser(lex);
-    // let p = parser.parse();
+    let parser = new Parser(lex);
+    let p = parser.parse();
     // astPrint(p);
-    // let interpter = new Interpter();
-    // let re = interpter.visit(p);
-    // console.log(re);
+    let interpter = new Interpter();
+    let re = interpter.visit(p);
+    console.log(interpter.ENV);
 }
 
 run();
