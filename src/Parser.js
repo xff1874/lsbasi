@@ -1,6 +1,13 @@
 import Lexer from './Lexer';
 import { TokenType, Token } from './Token';
-import { NumAST, BinaryAST } from './astnode';
+import {
+    NumAST,
+    BinaryAST,
+    VarAST,
+    AssignAST,
+    CompoundAST,
+    NoAST,
+} from './astnode';
 
 /**
  * expr -> term ((PLUS|MINUS)term)*
@@ -36,6 +43,8 @@ class Parser {
             this.eat(TokenType.RPAREN);
             return re;
         }
+
+        return this.variable();
     }
 
     term() {
@@ -79,8 +88,69 @@ class Parser {
         return node;
     }
 
+    variable() {
+        let current = this.current_token;
+        this.eat(TokenType.ID);
+        return new VarAST(current, current.value);
+    }
+
+    assignment_statement() {
+        let current = this.current_token;
+        let left = this.variable();
+        this.eat(TokenType.ASSIGN);
+        let right = this.exp();
+
+        return new AssignAST(
+            left,
+            new Token(TokenType.ASSIGN, TokenType.ASSIGN),
+            right
+        );
+    }
+    statement_list() {
+        let node = this.statement();
+
+        if (this.current_token.type == TokenType.SEMI) {
+            this.eat(TokenType.SEMI);
+            let nodelist = this.statement_list();
+            if (nodelist) node = [node].concat(nodelist);
+        }
+
+        return node;
+    }
+
+    statement() {
+        let current = this.current_token;
+        let node;
+
+        if (current.type == TokenType.BEGIN) {
+            node = this.compound_statement();
+        } else if (current.type == TokenType.ID) {
+            node = this.assignment_statement();
+        }
+        return node;
+    }
+
+    compound_statement() {
+        this.eat(TokenType.BEGIN);
+        let node = this.statement_list();
+        this.eat(TokenType.END);
+
+        let compound_ast = new CompoundAST();
+        compound_ast.children = node;
+        return compound_ast;
+    }
+
+    program() {
+        let node = this.compound_statement();
+        this.eat(TokenType.DOT);
+        if (this.current_token.type != TokenType.EOF) {
+            throw 'Houston, we got a problem';
+        }
+        return node;
+    }
+
     parse() {
-        return this.exp();
+        return this.program();
     }
 }
 
