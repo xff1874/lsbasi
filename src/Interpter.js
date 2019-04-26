@@ -29,7 +29,10 @@ export default class Interpter {
             return this.visit(astnode.left) * this.visit(astnode.right);
         }
 
-        if (astnode.token.type == TokenType.DIVISION) {
+        if (
+            astnode.token.type == TokenType.INTEGER_DIV ||
+            astnode.token.type == TokenType.FLOAT_DIV
+        ) {
             return this.visit(astnode.left) / this.visit(astnode.right);
         }
     }
@@ -55,6 +58,17 @@ export default class Interpter {
         return this.ENV[astnode.value];
     }
 
+    visit_program(astnode) {
+        return this.visit(astnode.block);
+    }
+
+    visit_block(astnode) {
+        for (let i = 0; i < astnode.declarations.length; i++) {
+            this.visit(astnode.declarations[i]);
+        }
+        this.visit(astnode.compound_statement);
+    }
+
     visit(astNode) {
         if (astNode instanceof BinaryAST) {
             return this.visit_binary_ast(astNode);
@@ -72,6 +86,14 @@ export default class Interpter {
 
         if (astNode instanceof VarAST) {
             return this.visit_var(astNode);
+        }
+
+        if (astNode instanceof ProgramAST) {
+            return this.visit_program(astNode);
+        }
+
+        if (astNode instanceof BlockAST) {
+            return this.visit_block(astNode);
         }
     }
 }

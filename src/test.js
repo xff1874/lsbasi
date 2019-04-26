@@ -13,16 +13,27 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer(`PROGRAM Part10AST;
+    let lex = new Lexer(`PROGRAM Part10;
 VAR
-   a, b : INTEGER;
-   y    : REAL;
+   number     : INTEGER;
+   a, b, c, x : INTEGER;
+   y          : REAL;
 
-BEGIN {Part10AST}
-   a := 2;
-   b := 10 * a + 10 * a DIV 4;
+BEGIN {Part10}
+   BEGIN
+      number := 2;
+      a := number;
+      b := 10 * a + 10 * number DIV 4;
+   END;
+   x := 11;
    y := 20 / 7 + 3.14;
-END.  {Part10AST}`);
+   { writeln('a = ', a); }
+   { writeln('b = ', b); }
+   { writeln('c = ', c); }
+   { writeln('number = ', number); }
+   { writeln('x = ', x); }
+   { writeln('y = ', y); }
+END.  {Part10}`);
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
     // }
