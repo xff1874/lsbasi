@@ -2,12 +2,18 @@ import Lexer from './Lexer';
 import { TokenType, Token } from './Token';
 import {
     NumAST,
+    VarDeclAST,
     BinaryAST,
+    TypeAST,
     VarAST,
     AssignAST,
     CompoundAST,
     NoAST,
+    ProgramAST,
+    BlockAST,
 } from './astnode';
+import { blockStatement } from '@babel/types';
+import { shouldInstrument } from 'jest-runtime';
 
 /**
  * expr -> term ((PLUS|MINUS)term)*
@@ -31,36 +37,45 @@ class Parser {
         }
     }
 
+    empty() {
+        return new NoAST();
+    }
+
     factor() {
         let current = this.current_token;
-        if (current.type == TokenType.NUM) {
-            this.eat(TokenType.NUM);
+        if (current.type == TokenType.INTEGER_CONST) {
+            this.eat(TokenType.INTEGER_CONST);
             return new NumAST(current);
-        }
-        if (current.type == TokenType.LPAREN) {
+        } else if (current.type == TokenType.REAL_CONST) {
+            this.eat(TokenType.REAL_CONST);
+            return new NumAST(current);
+        } else if (current.type == TokenType.LPAREN) {
             this.eat(TokenType.LPAREN);
             let re = this.exp();
             this.eat(TokenType.RPAREN);
             return re;
-        }
-
-        return this.variable();
+        } else return this.variable();
     }
 
     term() {
         let node = this.factor();
 
         while (
-            this.current_token.type == TokenType.MUL ||
-            this.current_token.type == TokenType.DIVISION
+            [TokenType.MUL, TokenType.INTEGER_DIV, TokenType.FLOAT_DIV].indexOf(
+                this.current_token.type
+            ) != -1
         ) {
             let current_token = this.current_token;
             if (this.current_token.type == TokenType.MUL) {
                 this.eat(TokenType.MUL);
             }
 
-            if (this.current_token.type == TokenType.DIVISION) {
-                this.eat(TokenType.DIVISION);
+            if (this.current_token.type == TokenType.INTEGER_DIV) {
+                this.eat(TokenType.INTEGER_DIV);
+            }
+
+            if (this.current_token.type == TokenType.FLOAT_DIV) {
+                this.eat(TokenType.FLOAT_DIV);
             }
             //save previous node as left tree branch.
             node = new BinaryAST(node, current_token, this.factor());
@@ -140,13 +155,84 @@ class Parser {
         return compound_ast;
     }
 
+    type_spec() {
+        if (this.current_token.type == TokenType.INTEGER) {
+            let current = this.current_token;
+            this.eat(TokenType.INTEGER);
+            return new TypeAST(current, current.value);
+        } else if (this.current_token.type == TokenType.REAL) {
+            let current = this.current_token;
+            this.eat(TokenType.REAL);
+            return new TypeAST(current, current.value);
+        }
+
+        throw `${this.current_token} is not INTEGER or REAL`;
+    }
+    //"""variable_declaration : ID (COMMA ID)* COLON type_spec"""
+    variable_declaration() {
+        let varsList = [];
+        if (this.current_token.type == TokenType.ID) {
+            let current = this.current_token;
+            this.eat(TokenType.ID);
+            varsList.push(new VarAST(current, current.value));
+        }
+
+        while (this.current_token.type == TokenType.COMMA) {
+            this.eat(TokenType.COMMA);
+            let current = this.current_token;
+            varsList.push(new VarAST(current, current.value));
+            this.eat(TokenType.ID);
+        }
+        this.eat(TokenType.COLON);
+
+        let type_node = this.type_spec();
+
+        let vardecl = new VarDeclAST(varsList, type_node);
+
+        return vardecl;
+    }
+
+    //declarations : VAR (variable_declaration SEMI)+| empty
+    declarations() {
+        let declarations = [];
+        if (this.current_token.type == TokenType.VAR) {
+            this.eat(TokenType.VAR);
+            while (this.current_token.type == TokenType.ID) {
+                let node = this.variable_declaration();
+                declarations.push(node);
+                this.eat(TokenType.SEMI);
+            }
+        } else {
+            this.empty();
+        }
+        return declarations;
+    }
+
+    /**
+     * block : declarations compound_statement
+     */
+
+    block() {
+        let declarations = this.declarations();
+        let compound_statement = this.compound_statement();
+
+        return new BlockAST(declarations, compound_statement);
+    }
+
+    //    """program : PROGRAM variable SEMI block DOT"""
+
     program() {
-        let node = this.compound_statement();
+        this.eat(TokenType.PROGRAM);
+        let var_node = this.variable();
+        this.eat(TokenType.SEMI);
+        let block = this.block();
         this.eat(TokenType.DOT);
+
+        let program = new ProgramAST(var_node, block);
         if (this.current_token.type != TokenType.EOF) {
             throw 'Houston, we got a problem';
         }
-        return node;
+        return program;
     }
 
     parse() {

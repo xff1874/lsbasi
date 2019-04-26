@@ -13,14 +13,16 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer(`BEGIN
-    BEGIN
-        number := 2;
-        a := number;
-        b := 10 * a + 10 * number / 4;
-    END;
-    x := 11;
-END.`);
+    let lex = new Lexer(`PROGRAM Part10AST;
+VAR
+   a, b : INTEGER;
+   y    : REAL;
+
+BEGIN {Part10AST}
+   a := 2;
+   b := 10 * a + 10 * a DIV 4;
+   y := 20 / 7 + 3.14;
+END.  {Part10AST}`);
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
     // }

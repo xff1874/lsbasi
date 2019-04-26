@@ -46,18 +46,28 @@ class Lexer {
                 this.advance();
     }
 
-    create_digital_token() {
+    number() {
         let re = '';
         while (!this.isEnd() && this.is_digital(this.current_char)) {
             re += this.current_char;
             this.advance();
         }
 
-        return new Token(TokenType.NUM, re);
+        if (this.current_char == '.') {
+            this.advance();
+            re += '.';
+            while (!this.isEnd() && this.is_digital(this.current_char)) {
+                re += this.current_char;
+                this.advance();
+            }
+            return new Token(TokenType.REAL_CONST, re);
+        } else {
+            return new Token(TokenType.INTEGER_CONST, re);
+        }
     }
 
     is_id(c) {
-        return /[a-zA-Z]/.test(c);
+        return /[0-9a-zA-Z]/.test(c);
     }
 
     create_id() {
@@ -73,12 +83,19 @@ class Lexer {
         // return ;
     }
 
+    skip_comment() {
+        while (!this.isEnd() && this.current_char != '}') {
+            this.advance();
+        }
+        this.advance(); //the last }sign
+    }
+
     get_next_token() {
         while (!this.isEnd()) {
             this.skip_white_space();
 
             if (this.is_digital(this.current_char)) {
-                return this.create_digital_token();
+                return this.number();
             }
 
             if (this.is_id(this.current_char)) {
@@ -102,7 +119,7 @@ class Lexer {
 
             if (this.current_char == '/') {
                 this.advance();
-                return new Token(TokenType.DIVISION, '/');
+                return new Token(TokenType.FLOAT_DIV, '/');
             }
 
             if (this.current_char == '(') {
@@ -129,6 +146,27 @@ class Lexer {
                 this.advance();
                 this.advance();
                 return new Token(TokenType.ASSIGN, ':=');
+            }
+
+            if (this.current_char == '{') {
+                this.advance();
+                this.skip_comment();
+                continue;
+            }
+
+            if (this.current_char == ':') {
+                this.advance();
+                return new Token(TokenType.COLON, ':');
+            }
+
+            if (this.current_char == ',') {
+                this.advance();
+                return new Token(TokenType.COMMA, ',');
+            }
+
+            if (this.current_char == '/') {
+                this.advance();
+                return new Token(TokenType.FLOAT_DIV, '/');
             }
 
             this.error();
