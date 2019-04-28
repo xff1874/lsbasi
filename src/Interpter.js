@@ -1,14 +1,10 @@
 import {
     NumAST,
-    VarDeclAST,
     BinaryAST,
-    TypeAST,
     VarAST,
     AssignAST,
     CompoundAST,
     NoAST,
-    ProgramAST,
-    BlockAST,
 } from './astnode';
 import { TokenType } from './Token';
 
