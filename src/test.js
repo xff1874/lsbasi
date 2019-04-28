@@ -14,6 +14,7 @@ function astPrint(node) {
 function run() {
     debugger;
 <<<<<<< HEAD
+<<<<<<< HEAD
     let lex = new Lexer(`PROGRAM Part10;
 VAR
    number     : INTEGER;
@@ -36,6 +37,8 @@ BEGIN {Part10}
    { writeln('y = ', y); }
 END.  {Part10}`);
 =======
+=======
+>>>>>>> parent of bda32ea... feat: p10 parser ok
     let lex = new Lexer(`BEGIN
     BEGIN
         number := 2;
@@ -44,6 +47,9 @@ END.  {Part10}`);
     END;
     x := 11;
 END.`);
+<<<<<<< HEAD
+>>>>>>> parent of bda32ea... feat: p10 parser ok
+=======
 >>>>>>> parent of bda32ea... feat: p10 parser ok
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
