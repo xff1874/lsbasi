@@ -10,9 +10,20 @@ const TokenType = {
     BEGIN: 'BEGIN',
     END: 'END',
     ID: 'ID',
-    SEMI: 'SEMI',
-    DOT: 'DOT',
+    SEMI: ';',
+    DOT: '.',
     ASSIGN: 'ASSIGN',
+    PROGRAM: 'PROGRAM',
+    VAR: 'VAR',
+    COMMA: ',',
+    COLON: ':',
+    INTEGER: 'INTEGER',
+    REAL: 'REAL',
+    REAL_CONST: 'REAL_CONST',
+    INTEGER_CONST: 'INTEGER_CONST',
+    DIV: 'DIV',
+    INTEGER_DIV: 'INTEGER_DIV',
+    FLOAT_DIV: 'FLOAT_DIV',
 };
 
 class Token {
@@ -29,6 +40,11 @@ class Token {
 const reservedwords = {
     BEGIN: new Token(TokenType.BEGIN, TokenType.BEGIN),
     END: new Token(TokenType.END, TokenType.END),
+    PROGRAM: new Token(TokenType.PROGRAM, TokenType.PROGRAM),
+    INTEGER: new Token(TokenType.INTEGER, TokenType.INTEGER),
+    REAL: new Token(TokenType.REAL, TokenType.REAL),
+    DIV: new Token(TokenType.INTEGER_DIV, TokenType.INTEGER_DIV),
+    VAR: new Token(TokenType.VAR, TokenType.VAR),
 };
 
 export { TokenType, Token, reservedwords };

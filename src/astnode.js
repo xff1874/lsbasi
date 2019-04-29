@@ -42,4 +42,37 @@ class CompoundAST extends AST {
 
 class NoAST extends AST {}
 
-export { NumAST, BinaryAST, VarAST, AssignAST, CompoundAST, NoAST };
+class ProgramAST extends AST {
+    constructor(variable, block) {
+        super(variable, block);
+        this.variable = variable;
+        this.block = block;
+    }
+}
+class BlockAST extends AST {
+    constructor(declarations, compound_statement) {
+        super(declarations, compound_statement);
+        this.declarations = declarations;
+        this.compound_statement = compound_statement;
+    }
+}
+
+class VarDeclAST extends AST {
+    constructor(ids, type_spec) {
+        super(ids, type_spec);
+        this.ids = ids;
+        this.type_spec = type_spec;
+    }
+}
+
+export {
+    NumAST,
+    BinaryAST,
+    VarAST,
+    AssignAST,
+    CompoundAST,
+    NoAST,
+    ProgramAST,
+    BlockAST,
+    VarDeclAST,
+};

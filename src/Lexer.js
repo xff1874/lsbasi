@@ -53,11 +53,20 @@ class Lexer {
             this.advance();
         }
 
-        return new Token(TokenType.NUM, re);
+        if (this.current_char == '.') {
+            this.advance();
+            while (!this.isEnd() && this.is_digital(this.current_char)) {
+                re += this.current_char;
+                this.advance();
+            }
+            return new Token(TokenType.REAL_CONST, re);
+        } else {
+            return new Token(TokenType.INTEGER_CONST, re);
+        }
     }
 
     is_id(c) {
-        return /[a-zA-Z]/.test(c);
+        return /[a-zA-Z0-9]/.test(c);
     }
 
     create_id() {
@@ -71,6 +80,13 @@ class Lexer {
             : new Token(TokenType.ID, re);
 
         // return ;
+    }
+
+    skip_comment() {
+        while (!this.isEnd() && this.current_char != '}') {
+            this.advance();
+        }
+        this.advance();
     }
 
     get_next_token() {
@@ -102,7 +118,7 @@ class Lexer {
 
             if (this.current_char == '/') {
                 this.advance();
-                return new Token(TokenType.DIVISION, '/');
+                return new Token(TokenType.FLOAT_DIV, '/');
             }
 
             if (this.current_char == '(') {
@@ -129,6 +145,22 @@ class Lexer {
                 this.advance();
                 this.advance();
                 return new Token(TokenType.ASSIGN, ':=');
+            }
+
+            if (this.current_char == '{') {
+                this.advance();
+                this.skip_comment();
+                continue;
+            }
+
+            if (this.current_char == ':') {
+                this.advance();
+                return new Token(TokenType.COLON, ':');
+            }
+
+            if (this.current_char == ',') {
+                this.advance();
+                return new Token(TokenType.COMMA, ',');
             }
 
             this.error();

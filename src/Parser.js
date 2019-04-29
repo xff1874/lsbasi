@@ -7,6 +7,9 @@ import {
     AssignAST,
     CompoundAST,
     NoAST,
+    ProgramAST,
+    BlockAST,
+    VarDeclAST,
 } from './astnode';
 
 /**
@@ -33,8 +36,15 @@ class Parser {
 
     factor() {
         let current = this.current_token;
-        if (current.type == TokenType.NUM) {
-            this.eat(TokenType.NUM);
+        if (
+            current.type == TokenType.REAL_CONST ||
+            current.type == TokenType.INTEGER_CONST
+        ) {
+            if (current.type == TokenType.REAL_CONST)
+                this.eat(TokenType.REAL_CONST);
+
+            if (current.type == TokenType.INTEGER_CONST)
+                this.eat(TokenType.INTEGER_CONST);
             return new NumAST(current);
         }
         if (current.type == TokenType.LPAREN) {
@@ -52,15 +62,20 @@ class Parser {
 
         while (
             this.current_token.type == TokenType.MUL ||
-            this.current_token.type == TokenType.DIVISION
+            this.current_token.type == TokenType.INTEGER_DIV ||
+            this.current_token.type == TokenType.FLOAT_DIV
         ) {
             let current_token = this.current_token;
             if (this.current_token.type == TokenType.MUL) {
                 this.eat(TokenType.MUL);
             }
 
-            if (this.current_token.type == TokenType.DIVISION) {
-                this.eat(TokenType.DIVISION);
+            if (this.current_token.type == TokenType.INTEGER_DIV) {
+                this.eat(TokenType.INTEGER_DIV);
+            }
+
+            if (this.current_token.type == TokenType.FLOAT_DIV) {
+                this.eat(TokenType.FLOAT_DIV);
             }
             //save previous node as left tree branch.
             node = new BinaryAST(node, current_token, this.factor());
@@ -140,8 +155,59 @@ class Parser {
         return compound_ast;
     }
 
+    declarations() {
+        this.eat(TokenType.VAR);
+        let nodes = [];
+
+        while (this.current_token.type == TokenType.ID) {
+            nodes.push(this.variable_declaration());
+            this.eat(TokenType.SEMI);
+        }
+
+        return nodes;
+    }
+
+    variable_declaration() {
+        if (this.current_token.type == TokenType.ID) {
+            let current = this.current_token;
+            this.eat(TokenType.ID);
+            let nodes = [current];
+            while (this.current_token.type == TokenType.COMMA) {
+                this.eat(TokenType.COMMA);
+                let left = this.current_token;
+                nodes.push(left);
+                this.eat(TokenType.ID);
+            }
+
+            this.eat(TokenType.COLON);
+
+            let type_spec = this.type_spec();
+
+            return new VarDeclAST(nodes, type_spec);
+        }
+    }
+
+    type_spec() {
+        let current = this.current_token;
+        if (current.type == TokenType.INTEGER) this.eat(TokenType.INTEGER);
+        else if (current.type == TokenType.REAL) this.eat(TokenType.REAL);
+        return current;
+    }
+
+    block() {
+        let declarations = this.declarations();
+        let compound_statement = this.compound_statement();
+        return new BlockAST(declarations, compound_statement);
+    }
+
     program() {
-        let node = this.compound_statement();
+        this.eat(TokenType.PROGRAM);
+        let v = this.variable();
+        this.eat(TokenType.SEMI);
+        let block = this.block();
+
+        let node = new ProgramAST(v, block);
+        // let node = this.compound_statement();
         this.eat(TokenType.DOT);
         if (this.current_token.type != TokenType.EOF) {
             throw 'Houston, we got a problem';
