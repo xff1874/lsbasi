@@ -10,6 +10,7 @@ import {
     ProgramAST,
     BlockAST,
     VarDeclAST,
+    UnaryOpAST,
 } from './astnode';
 
 /**
@@ -36,6 +37,15 @@ class Parser {
 
     factor() {
         let current = this.current_token;
+        if (current.type == TokenType.PLUS) {
+            this.eat(TokenType.PLUS);
+            return new UnaryOpAST(current, this.factor());
+        }
+
+        if (current.type == TokenType.MINUS) {
+            this.eat(TokenType.MINUS);
+            return new UnaryOpAST(current, this.factor());
+        }
         if (
             current.type == TokenType.REAL_CONST ||
             current.type == TokenType.INTEGER_CONST

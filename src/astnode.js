@@ -33,6 +33,14 @@ class VarAST extends AST {
     }
 }
 
+class UnaryOpAST extends AST {
+    constructor(token, expr) {
+        super(token, expr);
+        this.token = token;
+        this.expr = expr;
+    }
+}
+
 class CompoundAST extends AST {
     constructor() {
         super();
@@ -75,4 +83,5 @@ export {
     ProgramAST,
     BlockAST,
     VarDeclAST,
+    UnaryOpAST,
 };

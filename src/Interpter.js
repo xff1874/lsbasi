@@ -5,6 +5,10 @@ import {
     AssignAST,
     CompoundAST,
     NoAST,
+    ProgramAST,
+    BlockAST,
+    VarDeclAST,
+    UnaryOpAST,
 } from './astnode';
 import { TokenType } from './Token';
 
@@ -65,7 +69,38 @@ export default class Interpter {
         this.visit(astnode.compound_statement);
     }
 
+    visit_program_ast(astNode) {
+        this.visit(astNode.block);
+    }
+
+    visit_vardecl_ast(astNode) {
+        for (let i = 0; i < astNode.ids.length; i++) {
+            this.visit(astNode.ids[i]);
+        }
+    }
+
+    visit_unaryop(astNode) {
+        if (astNode.token.type == TokenType.PLUS) {
+            return +parseInt(this.visit(astNode.expr));
+        }
+
+        if (astNode.token.type == TokenType.MINUS) {
+            return -parseInt(this.visit(astNode.expr));
+        }
+    }
+
     visit(astNode) {
+        if (astNode instanceof ProgramAST) {
+            return this.visit_program_ast(astNode);
+        }
+
+        if (astNode instanceof BlockAST) {
+            return this.visit_block(astNode);
+        }
+
+        if (astNode instanceof VarDeclAST) {
+            return this.visit_vardecl_ast(astNode);
+        }
         if (astNode instanceof BinaryAST) {
             return this.visit_binary_ast(astNode);
         }
@@ -90,6 +125,10 @@ export default class Interpter {
 
         if (astNode instanceof BlockAST) {
             return this.visit_block(astNode);
+        }
+
+        if (astNode instanceof UnaryOpAST) {
+            return this.visit_unaryop(astNode);
         }
     }
 }

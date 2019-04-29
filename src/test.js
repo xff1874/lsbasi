@@ -24,6 +24,7 @@ BEGIN {Part10}
       number := 2;
       a := number;
       b := 10 * a + 10 * number DIV 4;
+      c := a - - b
    END;
    x := 11;
    y := 20 / 7 + 3.14;
@@ -42,9 +43,9 @@ END.  {Part10}`);
     let parser = new Parser(lex);
     let p = parser.parse();
     // // astPrint(p);
-    // let interpter = new Interpter();
-    // interpter.visit(p);
-    // console.log(interpter.ENV);
+    let interpter = new Interpter();
+    interpter.visit(p);
+    console.log(interpter.ENV);
 }
 
 run();
