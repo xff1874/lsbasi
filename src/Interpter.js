@@ -11,10 +11,13 @@ import {
     UnaryOpAST,
 } from './astnode';
 import { TokenType } from './Token';
+import {SymTable} from "./SymbolTable";
+import {VarSymbol} from "./Symbol";
 
 export default class Interpter {
     constructor(props) {
-        this.ENV = {};
+        this.smt = new SymTable();
+        this.ENV={};
     }
     visit_binary_ast(astnode) {
         if (astnode.token.type == TokenType.PLUS) {
@@ -51,11 +54,13 @@ export default class Interpter {
     visit_assign(astnode) {
         // this.
 
+
         this.ENV[astnode.left.value] = this.visit(astnode.right);
     }
 
     visit_var(astnode) {
         return this.ENV[astnode.value];
+
     }
 
     visit_program(astnode) {
@@ -75,8 +80,16 @@ export default class Interpter {
 
     visit_vardecl_ast(astNode) {
         for (let i = 0; i < astNode.ids.length; i++) {
+
+            let type_name = astNode.type_spec.value;
+            let typesymbol = this.smt.lookup(type_name);
+            let symbol_name = astNode.ids[i].value;
+            let varsymbol = new VarSymbol(symbol_name,typesymbol);
+            this.smt.define(varsymbol);
+
             this.visit(astNode.ids[i]);
         }
+
     }
 
     visit_unaryop(astNode) {
