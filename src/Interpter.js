@@ -53,12 +53,15 @@ export default class Interpter {
 
     visit_assign(astnode) {
         // this.
-
-
+        let name = astnode.left.value;
+        let symbol = this.smt.lookup(name);
+        if(!symbol)
+            throw `${name} symbol not found`
         this.ENV[astnode.left.value] = this.visit(astnode.right);
     }
 
     visit_var(astnode) {
+
         return this.ENV[astnode.value];
 
     }

@@ -13,28 +13,18 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer(`PROGRAM Part10;
+    let lex = new Lexer(`PROGRAM Part11;
 VAR
-   number     : INTEGER;
-   a, b, c, x : INTEGER;
-   y          : REAL;
+   number : INTEGER;
+   a, b   : INTEGER;
+   y      : REAL;
 
-BEGIN {Part10}
-   BEGIN
-      number := 2;
-      a := number;
-      b := 10 * a + 10 * number DIV 4;
-      c := a - - b;
-   END;
-   x := 11;
-   y := 20 / 7 + 3.14;
-   { writeln('a = ', a); }
-   { writeln('b = ', b); }
-   { writeln('c = ', c); }
-   { writeln('number = ', number); }
-   { writeln('x = ', x); }
-   { writeln('y = ', y); }
-END.  {Part10}`);
+BEGIN {Part11}
+   number := 2;
+   a := number ;
+   b := 10 * a + 10 * number DIV 4;
+   y := 20 / 7 + 3.14
+END.  {Part11}`);
 
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
