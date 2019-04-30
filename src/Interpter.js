@@ -147,4 +147,8 @@ export default class Interpter {
             return this.visit_unaryop(astNode);
         }
     }
+
+    printSmt(){
+        this.smt.printAllSymbols();
+    }
 }

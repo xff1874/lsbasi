@@ -1,6 +1,7 @@
 import Lexer from './Lexer';
 import Parser from './Parser';
 import Interpter from './Interpter';
+import { interpreterDirective } from '@babel/types';
 
 function astPrint(node) {
     if (!node) return;
@@ -36,6 +37,7 @@ END.  {Part11}`);
     let interpter = new Interpter();
     interpter.visit(p);
     console.log(interpter.ENV);
+    interpter.printSmt()
 }
 
 run();

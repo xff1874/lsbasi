@@ -25,6 +25,12 @@ export class SymTable{
         return  this.symbols[name];
     }
 
+    printAllSymbols(){
+        for(let key in this.symbols){
+            console.log(`${key} and value is ${JSON.stringify(this.symbols[key])}`)
+        }
+    }
+
 
 }
 
