@@ -73,6 +73,14 @@ class VarDeclAST extends AST {
     }
 }
 
+class ProcedureDeclAST extends AST {
+    constructor(name, block) {
+        super(name, block);
+        this.name = name;
+        this.block = block;
+    }
+}
+
 export {
     NumAST,
     BinaryAST,
@@ -84,4 +92,5 @@ export {
     BlockAST,
     VarDeclAST,
     UnaryOpAST,
+    ProcedureDeclAST,
 };

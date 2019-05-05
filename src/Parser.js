@@ -11,6 +11,7 @@ import {
     BlockAST,
     VarDeclAST,
     UnaryOpAST,
+    ProcedureDeclAST,
 } from './astnode';
 
 /**
@@ -165,12 +166,28 @@ class Parser {
         return compound_ast;
     }
 
+    /**
+     * """declarations : VAR (variable_declaration SEMI)+
+                    | (PROCEDURE ID SEMI block SEMI)*
+                    | empty
+     */
     declarations() {
-        this.eat(TokenType.VAR);
         let nodes = [];
+        if (this.current_token.type == TokenType.VAR) {
+            this.eat(TokenType.VAR);
 
-        while (this.current_token.type == TokenType.ID) {
-            nodes.push(this.variable_declaration());
+            while (this.current_token.type == TokenType.ID) {
+                nodes.push(this.variable_declaration());
+                this.eat(TokenType.SEMI);
+            }
+        }
+        if (this.current_token.type == TokenType.PROCEDURE) {
+            this.eat(TokenType.PROCEDURE);
+            let name = this.current_token.value;
+            this.eat(TokenType.ID);
+            this.eat(TokenType.SEMI);
+            let block = this.block();
+            nodes.push(new ProcedureDeclAST(name, block));
             this.eat(TokenType.SEMI);
         }
 

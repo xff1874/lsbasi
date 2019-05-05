@@ -9,15 +9,16 @@ import {
     BlockAST,
     VarDeclAST,
     UnaryOpAST,
+    ProcedureDeclAST,
 } from './astnode';
 import { TokenType } from './Token';
-import {SymTable} from "./SymbolTable";
-import {VarSymbol} from "./Symbol";
+import { SymTable } from './SymbolTable';
+import { VarSymbol } from './Symbol';
 
 export default class Interpter {
     constructor(props) {
         this.smt = new SymTable();
-        this.ENV={};
+        this.ENV = {};
     }
     visit_binary_ast(astnode) {
         if (astnode.token.type == TokenType.PLUS) {
@@ -55,15 +56,12 @@ export default class Interpter {
         // this.
         let name = astnode.left.value;
         let symbol = this.smt.lookup(name);
-        if(!symbol)
-            throw `${name} symbol not found`
+        if (!symbol) throw `${name} symbol not found`;
         this.ENV[astnode.left.value] = this.visit(astnode.right);
     }
 
     visit_var(astnode) {
-
         return this.ENV[astnode.value];
-
     }
 
     visit_program(astnode) {
@@ -83,16 +81,14 @@ export default class Interpter {
 
     visit_vardecl_ast(astNode) {
         for (let i = 0; i < astNode.ids.length; i++) {
-
             let type_name = astNode.type_spec.value;
             let typesymbol = this.smt.lookup(type_name);
             let symbol_name = astNode.ids[i].value;
-            let varsymbol = new VarSymbol(symbol_name,typesymbol);
+            let varsymbol = new VarSymbol(symbol_name, typesymbol);
             this.smt.define(varsymbol);
 
             this.visit(astNode.ids[i]);
         }
-
     }
 
     visit_unaryop(astNode) {
@@ -103,6 +99,10 @@ export default class Interpter {
         if (astNode.token.type == TokenType.MINUS) {
             return -parseInt(this.visit(astNode.expr));
         }
+    }
+
+    visit_procedure(astNode) {
+        //do nothing now;
     }
 
     visit(astNode) {
@@ -146,9 +146,13 @@ export default class Interpter {
         if (astNode instanceof UnaryOpAST) {
             return this.visit_unaryop(astNode);
         }
+
+        if (astNode instanceof ProcedureDeclAST) {
+            return this.visit_procedure(astNode);
+        }
     }
 
-    printSmt(){
+    printSmt() {
         this.smt.printAllSymbols();
     }
 }

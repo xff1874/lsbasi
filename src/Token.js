@@ -24,6 +24,7 @@ const TokenType = {
     DIV: 'DIV',
     INTEGER_DIV: 'INTEGER_DIV',
     FLOAT_DIV: 'FLOAT_DIV',
+    PROCEDURE: 'PROCEDURE',
 };
 
 class Token {
@@ -45,6 +46,7 @@ const reservedwords = {
     REAL: new Token(TokenType.REAL, TokenType.REAL),
     DIV: new Token(TokenType.INTEGER_DIV, TokenType.INTEGER_DIV),
     VAR: new Token(TokenType.VAR, TokenType.VAR),
+    PROCEDURE: new Token(TokenType.PROCEDURE, TokenType.PROCEDURE),
 };
 
 export { TokenType, Token, reservedwords };

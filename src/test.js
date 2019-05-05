@@ -14,18 +14,29 @@ function astPrint(node) {
 
 function run() {
     debugger;
-    let lex = new Lexer(`PROGRAM Part11;
+    let lex = new Lexer(`PROGRAM Part12;
 VAR
-   number : INTEGER;
-   a, b   : INTEGER;
-   y      : REAL;
+   a : INTEGER;
 
-BEGIN {Part11}
-   number := 2;
-   a := number ;
-   b := 10 * a + 10 * number DIV 4;
-   y := 20 / 7 + 3.14
-END.  {Part11}`);
+PROCEDURE P1;
+VAR
+   a : REAL;
+   k : INTEGER;
+
+   PROCEDURE P2;
+   VAR
+      a, z : INTEGER;
+   BEGIN {P2}
+      z := 777;
+   END;  {P2}
+
+BEGIN {P1}
+
+END;  {P1}
+
+BEGIN {Part12}
+   a := 10;
+END.  {Part12}`);
 
     // while (!lex.isEnd()) {
     //     console.log(lex.get_next_token());
@@ -37,7 +48,7 @@ END.  {Part11}`);
     let interpter = new Interpter();
     interpter.visit(p);
     console.log(interpter.ENV);
-    interpter.printSmt()
+    interpter.printSmt();
 }
 
 run();
