@@ -15,7 +15,8 @@ function astPrint(node) {
 function run() {
     debugger;
     let lex = new Lexer(`PROGRAM Main;
-   VAR x : INTEGER;
+    VAR x, y : INTEGER;
+    y : REAL;
 
 BEGIN
     x := y;

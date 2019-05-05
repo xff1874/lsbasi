@@ -88,6 +88,10 @@ export default class Interpter {
             let type_name = astNode.type_spec.value;
             let typesymbol = this.smt.lookup(type_name);
             let symbol_name = astNode.ids[i].value;
+            let lookvarsymbok = this.smt.lookup(symbol_name);
+            if (lookvarsymbok) {
+                throw `duplicate define ${symbol_name} `;
+            }
             let varsymbol = new VarSymbol(symbol_name, typesymbol);
             this.smt.define(varsymbol);
 
