@@ -141,7 +141,7 @@ class Parser {
             if (nodelist) node = [node].concat(nodelist);
         }
 
-        return node;
+        return node instanceof Array ? node : [node];
     }
 
     statement() {

@@ -18,7 +18,7 @@ import { VarSymbol } from './Symbol';
 export default class Interpter {
     constructor(props) {
         this.smt = new SymTable();
-        this.ENV = {};
+        // this.ENV = {};
     }
     visit_binary_ast(astnode) {
         if (astnode.token.type == TokenType.PLUS) {
@@ -54,14 +54,18 @@ export default class Interpter {
 
     visit_assign(astnode) {
         // this.
-        let name = astnode.left.value;
-        let symbol = this.smt.lookup(name);
-        if (!symbol) throw `${name} symbol not found`;
-        this.ENV[astnode.left.value] = this.visit(astnode.right);
+        // let name = astnode.left.value;
+        // let symbol = this.smt.lookup(name);
+        // if (!symbol) throw `${name} symbol not found`;
+        this.visit(astnode.left);
+        this.visit(astnode.right);
+        // this.ENV[astnode.left.value] = this.visit(astnode.right);
     }
 
     visit_var(astnode) {
-        return this.ENV[astnode.value];
+        let var_name = astnode.value;
+        let var_symbol = this.smt.lookup(var_name);
+        if (!var_symbol) throw `${var_name} symbol is not found`;
     }
 
     visit_program(astnode) {
